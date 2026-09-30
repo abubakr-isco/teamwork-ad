@@ -83,7 +83,7 @@ function updateProgress() {
 
   progressFill.style.width = `${percent}%`;
   progressPercent.textContent = `${percent}%`;
-  progressText.textContent = `Выполнено ${done} из ${total}`;
+  progressText.textContent = `Выполнено ${percent}% (${done} из ${total})`;
 }
 
 function render() {
