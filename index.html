@@ -35,6 +35,11 @@
       </div>
     </section>
 
+    <form class="add-form" id="addForm">
+      <input type="text" class="input" id="addInput" placeholder="Новая задача..." autocomplete="off" maxlength="120" aria-label="Текст новой задачи">
+      <button type="submit" class="btn add-btn">Добавить</button>
+    </form>
+
     <div class="toolbar">
       <div class="tabs" role="tablist" aria-label="Фильтр задач">
         <button class="tab active" type="button" role="tab" aria-selected="true" data-filter="all" onclick="setFilter('all')">
