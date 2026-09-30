@@ -55,11 +55,11 @@ function renderList(list) {
       const task = list[i];
 
       html = html + `
-        <button class="task ${task.completed ? 'done' : ''}" type="button" onclick="toggleTodo(${task.id})">
-          <span class="check" aria-hidden="true"></span>
-          <span class="task-text">${escapeHtml(task.todo)}</span>
+        <div class="task ${task.completed ? 'done' : ''}" onclick="toggleTodo(${task.id})">
+          <button class="check" type="button" aria-label="${task.completed ? 'Снять отметку' : 'Отметить выполненной'}"></button>
+          <p class="task-text">${escapeHtml(task.todo)}</p>
           <span class="user">User ${task.userId}</span>
-        </button>
+        </div>
       `;
     }
 
