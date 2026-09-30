@@ -296,6 +296,16 @@
     padding: 3px 8px;
     font-size: 12px;
   }
+
+  .tab {
+    padding: 8px 4px;
+    font-size: 14px;
+  }
+
+  .tab-count {
+    margin-left: 2px;
+    font-size: 12px;
+  }
 }
 
 /* На тач-экранах нет наведения — крестик виден всегда */
