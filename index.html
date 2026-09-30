@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Planner — Планировщик</title>
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/planner.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo"><span class="logo-mark">✓</span><span>Task Planner</span></a>
+      <nav class="nav" aria-label="Основная навигация">
+        <a href="index.html" class="nav-link active">Планировщик</a>
+        <a href="stats.html" class="nav-link">Статистика</a>
+      </nav>
+      <button class="btn btn-random" type="button" onclick="showRandomTodo()">🎲 <span>Случайная задача</span></button>
+    </div>
+  </header>
+
+  <main class="container planner">
+    <h1 class="page-title">Планировщик задач</h1>
+
+    <section class="card progress" aria-label="Общий прогресс">
+      <div class="progress-heading">
+        <div>
+          <p class="section-label">Общий прогресс</p>
+          <p class="progress-text" id="progressText">Загрузка...</p>
+        </div>
+        <strong class="progress-percent" id="progressPercent">0%</strong>
+      </div>
+      <div class="progress-bar" aria-hidden="true">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </section>
+
+    <div class="toolbar">
+      <div class="tabs" role="tablist" aria-label="Фильтр задач">
+        <button class="tab active" type="button" data-filter="all" onclick="setFilter('all')">
+          Все <span class="tab-count" id="countAll">0</span>
+        </button>
+        <button class="tab" type="button" data-filter="active" onclick="setFilter('active')">
+          Активные <span class="tab-count" id="countActive">0</span>
+        </button>
+        <button class="tab" type="button" data-filter="completed" onclick="setFilter('completed')">
+          Выполненные <span class="tab-count" id="countCompleted">0</span>
+        </button>
+      </div>
+
+      <input type="search" class="input search" id="searchInput" placeholder="Поиск задач..." aria-label="Поиск задач">
+    </div>
+
+    <div class="card task-list" id="taskList">
+      <p class="empty">Загрузка задач...</p>
+    </div>
+
+    <p class="shown" id="shownText"></p>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/planner.js"></script>
+</body>
+</html>

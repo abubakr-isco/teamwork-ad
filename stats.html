@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Planner — Статистика</title>
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/stats.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo"><span class="logo-mark">✓</span><span>Task Planner</span></a>
+      <nav class="nav" aria-label="Основная навигация">
+        <a href="index.html" class="nav-link">Планировщик</a>
+        <a href="stats.html" class="nav-link active">Статистика</a>
+      </nav>
+      <button class="btn btn-random" type="button" onclick="showRandomTodo()">🎲 <span>Случайная задача</span></button>
+    </div>
+  </header>
+
+  <main class="container stats">
+    <section class="metrics" aria-label="Основные показатели">
+      <article class="metric-card">
+        <div class="metric-icon icon-total">☷</div>
+        <strong id="metricTotal">0</strong>
+        <span>Всего задач</span>
+      </article>
+      <article class="metric-card">
+        <div class="metric-icon icon-done">✓</div>
+        <strong id="metricCompleted">0</strong>
+        <span>Выполнено</span>
+      </article>
+      <article class="metric-card">
+        <div class="metric-icon icon-active">◷</div>
+        <strong id="metricActive">0</strong>
+        <span>Активных</span>
+      </article>
+      <article class="metric-card">
+        <div class="metric-icon icon-percent">⌁</div>
+        <strong id="metricPercent">0%</strong>
+        <span>Процент</span>
+      </article>
+    </section>
+
+    <section class="card ranking-card">
+      <h1>Топ-10 пользователей</h1>
+      <div id="ranking" class="ranking">
+        <p class="empty">Загрузка статистики...</p>
+      </div>
+    </section>
+
+    <section class="card selected-card" id="selectedCard" aria-live="polite">
+      <div class="selected-heading">
+        <h2 id="selectedTitle">Выберите пользователя</h2>
+      </div>
+      <div id="selectedTasks" class="selected-tasks">
+        <p class="empty">Нажмите на пользователя в рейтинге.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/stats.js"></script>
+</body>
+</html>
