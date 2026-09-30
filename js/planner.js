@@ -69,7 +69,12 @@ function highlight(text) {
 
 function renderList(list) {
   if (list.length === 0) {
-    taskList.innerHTML = '<p class="empty">Ничего не найдено</p>';
+    taskList.innerHTML = `
+      <div class="empty">
+        <p>Ничего не найдено</p>
+        ${state.query !== '' ? '<button class="btn" type="button" onclick="resetSearch()">Сбросить поиск</button>' : ''}
+      </div>
+    `;
   } else {
     let html = '';
 
@@ -139,6 +144,13 @@ searchInput.addEventListener('input', function () {
   state.query = searchInput.value.trim();
   render();
 });
+
+function resetSearch() {
+  searchInput.value = '';
+  state.query = '';
+  render();
+  searchInput.focus();
+}
 
 // ----- Бонус: своя задача -----
 
