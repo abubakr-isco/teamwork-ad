@@ -14,6 +14,8 @@ const progressFill = document.getElementById('progressFill');
 const progressText = document.getElementById('progressText');
 const progressPercent = document.getElementById('progressPercent');
 const searchInput = document.getElementById('searchInput');
+const addForm = document.getElementById('addForm');
+const addInput = document.getElementById('addInput');
 
 function getFilteredTodos() {
   let result = todos;
@@ -114,6 +116,26 @@ function setFilter(filter) {
 
 searchInput.addEventListener('input', function () {
   state.query = searchInput.value.trim();
+  render();
+});
+
+// ----- Бонус: своя задача -----
+
+addForm.addEventListener('submit', function (event) {
+  event.preventDefault();
+
+  const text = addInput.value.trim();
+  if (text === '') return;
+
+  // Новая задача встаёт в начало списка
+  todos.unshift({
+    id: Date.now(),
+    todo: text,
+    completed: false,
+    userId: 1
+  });
+
+  addInput.value = '';
   render();
 });
 
