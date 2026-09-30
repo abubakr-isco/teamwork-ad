@@ -61,6 +61,7 @@ function renderList(list) {
           <button class="check" type="button" aria-label="${task.completed ? 'Снять отметку' : 'Отметить выполненной'}"></button>
           <p class="task-text">${escapeHtml(task.todo)}</p>
           <span class="user">User ${task.userId}</span>
+          <button class="delete" type="button" onclick="deleteTodo(event, ${task.id})" aria-label="Удалить задачу">×</button>
         </div>
       `;
     }
@@ -138,6 +139,14 @@ addForm.addEventListener('submit', function (event) {
   addInput.value = '';
   render();
 });
+
+function deleteTodo(event, id) {
+  // Иначе клик по «×» всплывёт до строки и отметит задачу
+  event.stopPropagation();
+
+  todos = todos.filter(task => task.id !== id);
+  render();
+}
 
 loadTodos()
   .then(render)
