@@ -49,13 +49,21 @@ function renderList(list) {
   if (list.length === 0) {
     taskList.innerHTML = '<p class="empty">Ничего не найдено</p>';
   } else {
-    taskList.innerHTML = list.map(task => `
-      <button class="task ${task.completed ? 'done' : ''}" type="button" onclick="toggleTodo(${task.id})">
-        <span class="check" aria-hidden="true"></span>
-        <span class="task-text">${escapeHtml(task.todo)}</span>
-        <span class="user">User ${task.userId}</span>
-      </button>
-    `).join('');
+    let html = '';
+
+    for (let i = 0; i < list.length; i++) {
+      const task = list[i];
+
+      html = html + `
+        <button class="task ${task.completed ? 'done' : ''}" type="button" onclick="toggleTodo(${task.id})">
+          <span class="check" aria-hidden="true"></span>
+          <span class="task-text">${escapeHtml(task.todo)}</span>
+          <span class="user">User ${task.userId}</span>
+        </button>
+      `;
+    }
+
+    taskList.innerHTML = html;
   }
 
   shownText.textContent = `Показано ${list.length} из ${todos.length}`;
