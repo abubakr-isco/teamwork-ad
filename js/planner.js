@@ -180,11 +180,23 @@ function deleteTodo(event, id) {
   render();
 }
 
-loadTodos()
-  .then(render)
-  .catch(function () {
-    taskList.innerHTML = '<p class="empty">Не удалось загрузить задачи 😔</p>';
-    shownText.textContent = '';
-    progressText.textContent = 'Нет данных';
-    progressPercent.textContent = '0%';
-  });
+function startPlanner() {
+  taskList.innerHTML = '<p class="empty">Загрузка задач...</p>';
+  progressText.textContent = 'Загрузка...';
+
+  loadTodos()
+    .then(render)
+    .catch(function () {
+      taskList.innerHTML = `
+        <div class="empty">
+          <p>Не удалось загрузить задачи 😔</p>
+          <button class="btn" type="button" onclick="startPlanner()">Повторить</button>
+        </div>
+      `;
+      shownText.textContent = '';
+      progressText.textContent = 'Нет данных';
+      progressPercent.textContent = '0%';
+    });
+}
+
+startPlanner();
