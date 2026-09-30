@@ -28,6 +28,7 @@ body {
   line-height: 1.5;
   color: var(--text);
   background: var(--bg);
+  max-width: 1480px;
 }
 
 .container {
