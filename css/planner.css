@@ -293,6 +293,14 @@
   }
 
   .task .user {
-    display: none;
+    padding: 3px 8px;
+    font-size: 12px;
+  }
+}
+
+/* На тач-экранах нет наведения — крестик виден всегда */
+@media (hover: none) {
+  .delete {
+    opacity: 1;
   }
 }
