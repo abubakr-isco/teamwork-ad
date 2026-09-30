@@ -47,6 +47,26 @@ function escapeHtml(text) {
     .replace(/'/g, '&#039;');
 }
 
+// Оборачивает совпадения с поиском в <mark>, остальной текст экранирует
+function highlight(text) {
+  if (state.query === '') return escapeHtml(text);
+
+  const lowerText = text.toLowerCase();
+  const query = state.query.toLowerCase();
+  let html = '';
+  let start = 0;
+  let index = lowerText.indexOf(query);
+
+  while (index !== -1) {
+    html = html + escapeHtml(text.slice(start, index));
+    html = html + '<mark>' + escapeHtml(text.slice(index, index + query.length)) + '</mark>';
+    start = index + query.length;
+    index = lowerText.indexOf(query, start);
+  }
+
+  return html + escapeHtml(text.slice(start));
+}
+
 function renderList(list) {
   if (list.length === 0) {
     taskList.innerHTML = '<p class="empty">Ничего не найдено</p>';
@@ -59,7 +79,7 @@ function renderList(list) {
       html = html + `
         <div class="task ${task.completed ? 'done' : ''}" onclick="toggleTodo(${task.id})">
           <button class="check" type="button" aria-label="${task.completed ? 'Снять отметку' : 'Отметить выполненной'}"></button>
-          <p class="task-text">${escapeHtml(task.todo)}</p>
+          <p class="task-text">${highlight(task.todo)}</p>
           <span class="user">User ${task.userId}</span>
           <button class="delete" type="button" onclick="deleteTodo(event, ${task.id})" aria-label="Удалить задачу">×</button>
         </div>

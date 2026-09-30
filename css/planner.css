@@ -202,6 +202,12 @@
   transform: rotate(45deg);
 }
 
+.task-text mark {
+  border-radius: 3px;
+  color: inherit;
+  background: var(--warning-soft);
+}
+
 .task.done .task-text {
   color: var(--muted);
   text-decoration: line-through;
