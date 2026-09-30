@@ -1,0 +1,260 @@
+/* ===== Страница «Планировщик» ===== */
+
+.planner {
+  padding-top: 32px;
+  padding-bottom: 48px;
+}
+
+.page-title {
+  margin: 0 0 20px;
+  font-size: 28px;
+}
+
+.card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.input {
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input:focus {
+  border-color: var(--accent);
+}
+
+/* ----- Прогресс-бар ----- */
+
+.progress {
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.progress-bar {
+  height: 12px;
+  border-radius: 6px;
+  background: var(--accent-soft);
+  overflow: hidden;
+}
+
+.progress-fill {
+  width: 0;
+  height: 100%;
+  border-radius: 6px;
+  background: var(--accent);
+  transition: width 0.4s ease;
+}
+
+.progress-text {
+  margin: 10px 0 0;
+  font-weight: 500;
+}
+
+/* ----- Добавление задачи ----- */
+
+.add-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.add-form .input {
+  flex: 1;
+}
+
+/* ----- Вкладки и поиск ----- */
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 10px;
+  background: var(--border);
+}
+
+.tab {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 500;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.tab:hover {
+  color: var(--text);
+}
+
+.tab.active {
+  color: var(--text);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.tab-count {
+  margin-left: 4px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.search {
+  width: 260px;
+}
+
+/* ----- Список задач ----- */
+
+.task-list {
+  overflow: hidden;
+}
+
+.task {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.task:last-child {
+  border-bottom: none;
+}
+
+.task:hover {
+  background: var(--bg);
+}
+
+.task p {
+  flex: 1;
+  margin: 0;
+}
+
+.check {
+  position: relative;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.task:hover .check {
+  border-color: var(--accent);
+}
+
+/* Выполненная задача */
+
+.task.done .check {
+  border-color: var(--success);
+  background: var(--success);
+}
+
+.task.done .check::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 6px;
+  width: 5px;
+  height: 10px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.task.done p {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.delete {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s, color 0.15s;
+}
+
+.task:hover .delete {
+  opacity: 1;
+}
+
+.delete:hover {
+  color: #d64545;
+  background: #fbe9e9;
+}
+
+.empty {
+  margin: 0;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.shown {
+  margin: 12px 0 0;
+  font-size: 14px;
+  color: var(--muted);
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .toolbar,
+  .search {
+    width: 100%;
+  }
+
+  .tabs {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .tab {
+    flex: auto;
+    padding: 8px 4px;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  .tab-count {
+    margin-left: 2px;
+    font-size: 12px;
+  }
+
+  .task {
+    padding: 12px 14px;
+  }
+
+  .delete {
+    opacity: 1;
+  }
+}

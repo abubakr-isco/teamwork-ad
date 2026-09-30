@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Планировщик — Task Planner</title>
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/planner.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">Task Planner</a>
+      <nav class="nav">
+        <a href="index.html" class="nav-link active">Планировщик</a>
+        <a href="stats.html" class="nav-link">Статистика</a>
+      </nav>
+      <button class="btn btn-accent btn-random" onclick="showRandomTodo()">🎲 Случайная задача</button>
+    </div>
+  </header>
+
+  <main class="container planner">
+    <h1 class="page-title">Мои задачи</h1>
+
+    <section class="card progress">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <p class="progress-text" id="progressText">Загрузка...</p>
+    </section>
+
+    <form class="add-form" id="addForm">
+      <input type="text" class="input" id="addInput" placeholder="Новая задача..." autocomplete="off">
+      <button type="submit" class="btn btn-accent">Добавить</button>
+    </form>
+
+    <div class="toolbar">
+      <div class="tabs">
+        <button class="tab active" data-filter="all" onclick="setFilter('all')">
+          Все <span class="tab-count">(<span id="countAll">0</span>)</span>
+        </button>
+        <button class="tab" data-filter="active" onclick="setFilter('active')">
+          Активные <span class="tab-count">(<span id="countActive">0</span>)</span>
+        </button>
+        <button class="tab" data-filter="completed" onclick="setFilter('completed')">
+          Выполненные <span class="tab-count">(<span id="countCompleted">0</span>)</span>
+        </button>
+      </div>
+
+      <input type="search" class="input search" id="searchInput" placeholder="🔍 Поиск задач...">
+    </div>
+
+    <div class="card task-list" id="taskList">
+      <p class="empty">Загрузка задач...</p>
+    </div>
+
+    <p class="shown" id="shownText"></p>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/planner.js"></script>
+</body>
+</html>
