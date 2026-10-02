@@ -1,0 +1,6 @@
+{
+  "name": "Task Planner",
+  "description": "Интуитивный планировщик задач со статистикой выполнения, аналитикой топ пользователей и интерактивным интерфейсом.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,67 +1,149 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Task Planner — Статистика</title>
-  <link rel="stylesheet" href="css/common.css">
-  <link rel="stylesheet" href="css/stats.css">
-</head>
-<body>
-  <header class="header">
-    <div class="container header-inner">
-      <a href="index.html" class="logo"><span class="logo-mark">✓</span><span>Task Planner</span></a>
-      <nav class="nav" aria-label="Основная навигация">
-        <a href="index.html" class="nav-link">Планировщик</a>
-        <a href="stats.html" class="nav-link active">Статистика</a>
-      </nav>
-      <button class="btn btn-random" type="button" onclick="showRandomTodo()">🎲 <span>Случайная задача</span></button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Статистика — Task Planner</title>
+    <meta name="description" content="Статистика выполнения задач и рейтинг топ пользователей." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/common.css" />
+    <link rel="stylesheet" href="/css/stats.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- App Header -->
+      <header class="app-header">
+        <a href="index.html" class="header-brand">
+          <div class="brand-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <span class="brand-title">Task Planner</span>
+        </a>
+
+        <nav class="header-nav">
+          <a href="index.html" class="nav-link">Планировщик</a>
+          <a href="stats.html" class="nav-link active">Статистика</a>
+        </nav>
+
+        <div class="header-actions">
+          <button type="button" class="btn-random">
+            <img src="/public/icon/random.svg" width="16" height="16" alt="" class="icon-random" />
+            <span>Случайная задача</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Statistics Content -->
+      <main class="stats-container">
+        <!-- 4 Stat Cards Grid -->
+        <section class="stat-cards-grid">
+          <!-- Card 1: Total -->
+          <div class="stat-card">
+            <div class="stat-card-icon blue">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="6" y1="7" x2="20" y2="7"></line>
+                <line x1="6" y1="12" x2="16" y2="12"></line>
+                <line x1="6" y1="17" x2="12" y2="17"></line>
+              </svg>
+            </div>
+            <div id="stat-total" class="stat-card-number">254</div>
+            <div class="stat-card-label">Всего задач</div>
+          </div>
+
+          <!-- Card 2: Completed -->
+          <div class="stat-card">
+            <div class="stat-card-icon green">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <div id="stat-completed" class="stat-card-number">140</div>
+            <div class="stat-card-label">Выполнено</div>
+          </div>
+
+          <!-- Card 3: Active -->
+          <div class="stat-card">
+            <div class="stat-card-icon amber">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <div id="stat-active" class="stat-card-number">114</div>
+            <div class="stat-card-label">Активных</div>
+          </div>
+
+          <!-- Card 4: Percentage -->
+          <div class="stat-card">
+            <div class="stat-card-icon pink">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                <polyline points="17 6 23 6 23 12"></polyline>
+              </svg>
+            </div>
+            <div id="stat-percentage" class="stat-card-number">55%</div>
+            <div class="stat-card-label">Процент</div>
+          </div>
+        </section>
+
+        <!-- Top-10 Users Card -->
+        <section class="section-card">
+          <h2 class="section-title">Топ-10 пользователей</h2>
+          <div id="users-list" class="users-list">
+            <!-- Dynamically populated by js/stats.js -->
+          </div>
+        </section>
+
+        <!-- Selected User Tasks Card -->
+        <section class="section-card">
+          <h2 id="user-tasks-title" class="section-title">Задачи User 152 (5)</h2>
+          <div id="user-tasks-list" class="user-tasks-list">
+            <!-- Dynamically populated by js/stats.js -->
+          </div>
+        </section>
+      </main>
     </div>
-  </header>
 
-  <main class="container stats">
-    <section class="metrics" aria-label="Основные показатели">
-      <article class="metric-card">
-        <div class="metric-icon icon-total">☷</div>
-        <strong id="metricTotal">0</strong>
-        <span>Всего задач</span>
-      </article>
-      <article class="metric-card">
-        <div class="metric-icon icon-done">✓</div>
-        <strong id="metricCompleted">0</strong>
-        <span>Выполнено</span>
-      </article>
-      <article class="metric-card">
-        <div class="metric-icon icon-active">◷</div>
-        <strong id="metricActive">0</strong>
-        <span>Активных</span>
-      </article>
-      <article class="metric-card">
-        <div class="metric-icon icon-percent">⌁</div>
-        <strong id="metricPercent">0%</strong>
-        <span>Процент</span>
-      </article>
-    </section>
+    <!-- Random Task Modal -->
+    <div id="random-modal-overlay" class="modal-overlay" aria-hidden="true">
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-task-title">
+        <div class="modal-header">
+          <span class="modal-eyebrow">СЛУЧАЙНАЯ ЗАДАЧА</span>
+          <button type="button" id="modal-close-btn" class="modal-close" aria-label="Закрыть">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
 
-    <section class="card ranking-card">
-      <h1>Топ-10 пользователей</h1>
-      <div id="ranking" class="ranking">
-        <p class="empty">Загрузка статистики...</p>
+        <h3 id="modal-task-title" class="modal-title">Обновить дизайн главной страницы</h3>
+
+        <div class="modal-meta">
+          <span id="modal-task-status" class="badge-status badge-active">Активна</span>
+          <span id="modal-task-user" class="user-name-text">User 48</span>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" id="modal-cancel-btn" class="btn-secondary">Закрыть</button>
+          <button type="button" id="modal-roll-again-btn" class="btn-secondary">
+            <img src="/public/icon/random.svg" width="14" height="14" alt="" class="icon-random" />
+            <span>Другая задача</span>
+          </button>
+          <button type="button" id="modal-toggle-status-btn" class="btn-primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Изменить статус</span>
+          </button>
+        </div>
       </div>
-    </section>
+    </div>
 
-    <section class="card selected-card" id="selectedCard" aria-live="polite">
-      <div class="selected-heading">
-        <h2 id="selectedTitle">Выберите пользователя</h2>
-      </div>
-      <div id="selectedTasks" class="selected-tasks">
-        <p class="empty">Нажмите на пользователя в рейтинге.</p>
-      </div>
-    </section>
-  </main>
-
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script src="js/common.js"></script>
-  <script src="js/stats.js"></script>
-</body>
+    <script type="module" src="/js/stats.js"></script>
+  </body>
 </html>

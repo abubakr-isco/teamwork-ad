@@ -1,202 +1,172 @@
-// ===== Страница «Планировщик» =====
+// js/planner.js - Planner page controller
 
-const state = {
-  filter: 'all',
-  query: ''
-};
+import { getTasks, toggleTask, initRandomModal, getSvgIcon } from './common.js';
 
-const taskList = document.getElementById('taskList');
-const shownText = document.getElementById('shownText');
-const countAll = document.getElementById('countAll');
-const countActive = document.getElementById('countActive');
-const countCompleted = document.getElementById('countCompleted');
-const progressFill = document.getElementById('progressFill');
-const progressText = document.getElementById('progressText');
-const progressPercent = document.getElementById('progressPercent');
-const searchInput = document.getElementById('searchInput');
-const addForm = document.getElementById('addForm');
-const addInput = document.getElementById('addInput');
+let currentFilter = 'all';
+let currentSearch = '';
 
-function getFilteredTodos() {
-  let result = todos;
+function renderProgress(tasks) {
+  const total = tasks.length;
+  const completed = tasks.filter((t) => t.completed).length;
+  const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
 
-  if (state.filter === 'active') {
-    result = result.filter(task => task.completed === false);
-  } else if (state.filter === 'completed') {
-    result = result.filter(task => task.completed === true);
+  const headerEl = document.getElementById('progress-text');
+  const fillEl = document.getElementById('progress-fill');
+
+  if (headerEl) {
+    headerEl.textContent = `Выполнено ${percentage}% (${completed} из ${total})`;
   }
-
-  if (state.query !== '') {
-    const query = state.query.toLowerCase();
-    result = result.filter(task => task.todo.toLowerCase().includes(query));
+  if (fillEl) {
+    fillEl.style.width = `${percentage}%`;
   }
-
-  return result;
 }
 
-function getDoneCount() {
-  return todos.filter(task => task.completed === true).length;
-}
+function renderFilterCounts(tasks) {
+  const total = tasks.length;
+  const completed = tasks.filter((t) => t.completed).length;
+  const active = total - completed;
 
-function escapeHtml(text) {
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
+  const btnAll = document.getElementById('filter-all');
+  const btnActive = document.getElementById('filter-active');
+  const btnCompleted = document.getElementById('filter-completed');
 
-// Оборачивает совпадения с поиском в <mark>, остальной текст экранирует
-function highlight(text) {
-  if (state.query === '') return escapeHtml(text);
-
-  const lowerText = text.toLowerCase();
-  const query = state.query.toLowerCase();
-  let html = '';
-  let start = 0;
-  let index = lowerText.indexOf(query);
-
-  while (index !== -1) {
-    html = html + escapeHtml(text.slice(start, index));
-    html = html + '<mark>' + escapeHtml(text.slice(index, index + query.length)) + '</mark>';
-    start = index + query.length;
-    index = lowerText.indexOf(query, start);
-  }
-
-  return html + escapeHtml(text.slice(start));
-}
-
-function renderList(list) {
-  if (list.length === 0) {
-    taskList.innerHTML = `
-      <div class="empty">
-        <p>Ничего не найдено</p>
-        ${state.query !== '' ? '<button class="btn" type="button" onclick="resetSearch()">Сбросить поиск</button>' : ''}
-      </div>
+  if (btnAll) {
+    btnAll.innerHTML = `
+      <img src="/public/icon/users.svg" width="16" height="16" alt="" class="icon-filter-users" />
+      <span>Все (${total})</span>
     `;
-  } else {
-    let html = '';
+  }
+  if (btnActive) btnActive.textContent = `Активные (${active})`;
+  if (btnCompleted) btnCompleted.textContent = `Выполненные (${completed})`;
+}
 
-    for (let i = 0; i < list.length; i++) {
-      const task = list[i];
+function filterTasks(tasks) {
+  return tasks.filter((t) => {
+    if (currentFilter === 'active' && t.completed) return false;
+    if (currentFilter === 'completed' && !t.completed) return false;
 
-      html = html + `
-        <div class="task ${task.completed ? 'done' : ''}" onclick="toggleTodo(${task.id})">
-          <button class="check" type="button" aria-label="${task.completed ? 'Снять отметку' : 'Отметить выполненной'}"></button>
-          <p class="task-text">${highlight(task.todo)}</p>
-          <span class="user">User ${task.userId}</span>
-          <button class="delete" type="button" onclick="deleteTodo(event, ${task.id})" aria-label="Удалить задачу">×</button>
-        </div>
-      `;
+    if (currentSearch.trim()) {
+      const q = currentSearch.toLowerCase().trim();
+      const matchTitle = t.title.toLowerCase().includes(q);
+      const matchUser = t.userName.toLowerCase().includes(q);
+      return matchTitle || matchUser;
     }
 
-    taskList.innerHTML = html;
+    return true;
+  });
+}
+
+function renderTaskList(allTasks) {
+  const listEl = document.getElementById('tasks-list');
+  const footerEl = document.getElementById('tasks-footer');
+  if (!listEl) return;
+
+  const filtered = filterTasks(allTasks);
+
+  if (filtered.length === 0) {
+    listEl.innerHTML = `
+      <li class="empty-state">
+        <div class="empty-state-icon">${getSvgIcon('search', 'w-8 h-8')}</div>
+        <p>Задачи не найдены</p>
+      </li>
+    `;
+    if (footerEl) footerEl.textContent = `Показано 0 из ${allTasks.length}`;
+    return;
   }
 
-  shownText.textContent = `Показано ${list.length} из ${todos.length}`;
-}
+  const checkIcon = getSvgIcon('check');
 
-function updateCounters() {
-  const done = getDoneCount();
-  countAll.textContent = todos.length;
-  countActive.textContent = todos.length - done;
-  countCompleted.textContent = done;
-}
-
-function updateProgress() {
-  const done = getDoneCount();
-  const total = todos.length;
-  const percent = total === 0 ? 0 : Math.round((done / total) * 100);
-
-  progressFill.style.width = `${percent}%`;
-  progressPercent.textContent = `${percent}%`;
-  progressText.textContent = `Выполнено ${percent}% (${done} из ${total})`;
-}
-
-function render() {
-  renderList(getFilteredTodos());
-  updateCounters();
-  updateProgress();
-}
-
-function toggleTodo(id) {
-  const task = todos.find(item => item.id === id);
-  if (!task) return;
-
-  task.completed = !task.completed;
-  render();
-}
-
-function setFilter(filter) {
-  state.filter = filter;
-
-  document.querySelectorAll('.tab').forEach(tab => {
-    const isActive = tab.dataset.filter === filter;
-    tab.classList.toggle('active', isActive);
-    tab.setAttribute('aria-selected', String(isActive));
-  });
-
-  render();
-}
-
-searchInput.addEventListener('input', function () {
-  state.query = searchInput.value.trim();
-  render();
-});
-
-function resetSearch() {
-  searchInput.value = '';
-  state.query = '';
-  render();
-  searchInput.focus();
-}
-
-// ----- Бонус: своя задача -----
-
-addForm.addEventListener('submit', function (event) {
-  event.preventDefault();
-
-  const text = addInput.value.trim();
-  if (text === '') return;
-
-  // Новая задача встаёт в начало списка
-  todos.unshift({
-    id: Date.now(),
-    todo: text,
-    completed: false,
-    userId: 1
-  });
-
-  addInput.value = '';
-  render();
-});
-
-function deleteTodo(event, id) {
-  // Иначе клик по «×» всплывёт до строки и отметит задачу
-  event.stopPropagation();
-
-  todos = todos.filter(task => task.id !== id);
-  render();
-}
-
-function startPlanner() {
-  taskList.innerHTML = '<p class="empty">Загрузка задач...</p>';
-  progressText.textContent = 'Загрузка...';
-
-  loadTodos()
-    .then(render)
-    .catch(function () {
-      taskList.innerHTML = `
-        <div class="empty">
-          <p>Не удалось загрузить задачи 😔</p>
-          <button class="btn" type="button" onclick="startPlanner()">Повторить</button>
+  listEl.innerHTML = filtered
+    .map(
+      (task) => `
+      <li class="task-item ${task.completed ? 'completed' : ''}" data-task-id="${task.id}">
+        <div class="task-main">
+          <button type="button" class="task-checkbox-btn" aria-label="Переключить статус">
+            <div class="checkbox-circle ${task.completed ? 'checked' : ''}">
+              ${task.completed ? checkIcon : ''}
+            </div>
+          </button>
+          <span class="task-title" title="${task.title}">${task.title}</span>
         </div>
-      `;
-      shownText.textContent = '';
-      progressText.textContent = 'Нет данных';
-      progressPercent.textContent = '0%';
-    });
+        <span class="user-badge">${task.userName}</span>
+      </li>
+    `
+    )
+    .join('');
+
+  if (footerEl) {
+    footerEl.textContent = `Показано ${filtered.length} из ${allTasks.length}`;
+  }
+
+  // Attach click listeners to rows and checkboxes
+  listEl.querySelectorAll('.task-item').forEach((item) => {
+    const taskId = item.getAttribute('data-task-id');
+    const checkboxBtn = item.querySelector('.task-checkbox-btn');
+    const titleEl = item.querySelector('.task-title');
+
+    const handleToggle = (e) => {
+      e.stopPropagation();
+      toggleTask(taskId);
+      renderAll();
+    };
+
+    if (checkboxBtn) checkboxBtn.addEventListener('click', handleToggle);
+    if (titleEl) titleEl.addEventListener('click', handleToggle);
+  });
 }
 
-startPlanner();
+function renderAll() {
+  const tasks = getTasks();
+  renderProgress(tasks);
+  renderFilterCounts(tasks);
+  renderTaskList(tasks);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // 1. Initialize random task modal
+  initRandomModal(() => {
+    renderAll();
+  });
+
+  // 2. Filter buttons
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  filterBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.getAttribute('data-filter') || 'all';
+      const tasks = getTasks();
+      renderTaskList(tasks);
+    });
+  });
+
+  // 3. Search input
+  const searchInput = document.getElementById('search-input');
+  const searchClear = document.getElementById('search-clear');
+
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      currentSearch = e.target.value;
+      if (searchClear) {
+        searchClear.classList.toggle('visible', currentSearch.length > 0);
+      }
+      const tasks = getTasks();
+      renderTaskList(tasks);
+    });
+  }
+
+  if (searchClear) {
+    searchClear.addEventListener('click', () => {
+      if (searchInput) {
+        searchInput.value = '';
+        currentSearch = '';
+        searchClear.classList.remove('visible');
+        const tasks = getTasks();
+        renderTaskList(tasks);
+      }
+    });
+  }
+
+  // 4. Initial render
+  renderAll();
+});
