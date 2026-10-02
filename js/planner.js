@@ -14,6 +14,8 @@ const progressFill = document.getElementById('progressFill');
 const progressText = document.getElementById('progressText');
 const progressPercent = document.getElementById('progressPercent');
 const searchInput = document.getElementById('searchInput');
+const addForm = document.getElementById('addForm');
+const addInput = document.getElementById('addInput');
 
 function getFilteredTodos() {
   let result = todos;
@@ -45,17 +47,51 @@ function escapeHtml(text) {
     .replace(/'/g, '&#039;');
 }
 
+// Оборачивает совпадения с поиском в <mark>, остальной текст экранирует
+function highlight(text) {
+  if (state.query === '') return escapeHtml(text);
+
+  const lowerText = text.toLowerCase();
+  const query = state.query.toLowerCase();
+  let html = '';
+  let start = 0;
+  let index = lowerText.indexOf(query);
+
+  while (index !== -1) {
+    html = html + escapeHtml(text.slice(start, index));
+    html = html + '<mark>' + escapeHtml(text.slice(index, index + query.length)) + '</mark>';
+    start = index + query.length;
+    index = lowerText.indexOf(query, start);
+  }
+
+  return html + escapeHtml(text.slice(start));
+}
+
 function renderList(list) {
   if (list.length === 0) {
-    taskList.innerHTML = '<p class="empty">Ничего не найдено</p>';
+    taskList.innerHTML = `
+      <div class="empty">
+        <p>Ничего не найдено</p>
+        ${state.query !== '' ? '<button class="btn" type="button" onclick="resetSearch()">Сбросить поиск</button>' : ''}
+      </div>
+    `;
   } else {
-    taskList.innerHTML = list.map(task => `
-      <button class="task ${task.completed ? 'done' : ''}" type="button" onclick="toggleTodo(${task.id})">
-        <span class="check" aria-hidden="true"></span>
-        <span class="task-text">${escapeHtml(task.todo)}</span>
-        <span class="user">User ${task.userId}</span>
-      </button>
-    `).join('');
+    let html = '';
+
+    for (let i = 0; i < list.length; i++) {
+      const task = list[i];
+
+      html = html + `
+        <div class="task ${task.completed ? 'done' : ''}" onclick="toggleTodo(${task.id})">
+          <button class="check" type="button" aria-label="${task.completed ? 'Снять отметку' : 'Отметить выполненной'}"></button>
+          <p class="task-text">${highlight(task.todo)}</p>
+          <span class="user">User ${task.userId}</span>
+          <button class="delete" type="button" onclick="deleteTodo(event, ${task.id})" aria-label="Удалить задачу">×</button>
+        </div>
+      `;
+    }
+
+    taskList.innerHTML = html;
   }
 
   shownText.textContent = `Показано ${list.length} из ${todos.length}`;
@@ -75,7 +111,7 @@ function updateProgress() {
 
   progressFill.style.width = `${percent}%`;
   progressPercent.textContent = `${percent}%`;
-  progressText.textContent = `Выполнено ${done} из ${total}`;
+  progressText.textContent = `Выполнено ${percent}% (${done} из ${total})`;
 }
 
 function render() {
@@ -109,11 +145,58 @@ searchInput.addEventListener('input', function () {
   render();
 });
 
-loadTodos()
-  .then(render)
-  .catch(function () {
-    taskList.innerHTML = '<p class="empty">Не удалось загрузить задачи 😔</p>';
-    shownText.textContent = '';
-    progressText.textContent = 'Нет данных';
-    progressPercent.textContent = '0%';
+function resetSearch() {
+  searchInput.value = '';
+  state.query = '';
+  render();
+  searchInput.focus();
+}
+
+// ----- Бонус: своя задача -----
+
+addForm.addEventListener('submit', function (event) {
+  event.preventDefault();
+
+  const text = addInput.value.trim();
+  if (text === '') return;
+
+  // Новая задача встаёт в начало списка
+  todos.unshift({
+    id: Date.now(),
+    todo: text,
+    completed: false,
+    userId: 1
   });
+
+  addInput.value = '';
+  render();
+});
+
+function deleteTodo(event, id) {
+  // Иначе клик по «×» всплывёт до строки и отметит задачу
+  event.stopPropagation();
+
+  todos = todos.filter(task => task.id !== id);
+  render();
+}
+
+function startPlanner() {
+  taskList.innerHTML = '<p class="empty">Загрузка задач...</p>';
+  progressText.textContent = 'Загрузка...';
+
+  loadTodos()
+    .then(render)
+    .catch(function () {
+      taskList.innerHTML = `
+        <div class="empty">
+          <p>Не удалось загрузить задачи 😔</p>
+          <button class="btn" type="button" onclick="startPlanner()">Повторить</button>
+        </div>
+      `;
+      shownText.textContent = '';
+      progressText.textContent = 'Нет данных';
+      progressPercent.textContent = '0%';
+    });
+}
+
+startPlanner();
